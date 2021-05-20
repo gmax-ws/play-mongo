@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  keycloak:
+    build: .
+    container_name: $KEYCLOAK_NAME
+    image: $KEYCLOAK_IMAGE
+    restart: always
+    ports:
+      - $KEYCLOAK_HTTP_PORT:$KEYCLOAK_HTTP_PORT
+      - $KEYCLOAK_HTTPS_PORT:$KEYCLOAK_HTTPS_PORT
+    healthcheck:
+      test: nc -z -v 0.0.0.0 $KEYCLOAK_HTTP_PORT
+      interval: 5s
+      timeout: 1s
+      retries: 3
