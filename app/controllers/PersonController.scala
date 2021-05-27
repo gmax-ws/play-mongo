@@ -59,13 +59,13 @@ class PersonController(
                 Created(Json.toJson(person))
               }
             case e @ JsError(_) =>
-              Future.successful(BadRequest(JsError.toJson(e).toString()))
+              Future.successful(BadRequest(JsError.toJson(e)))
           }
         )
       }
     }
 
-  def updatePerson: Action[AnyContent] =
+  def updatePerson(): Action[AnyContent] =
     Action.async { implicit request =>
       withAuthorization("ROLE_WRITE", "ROLE_TEMPLATE") {
         request.body.asJson.fold(
@@ -77,7 +77,7 @@ class PersonController(
                 Ok(Json.toJson(person))
               }
             case e @ JsError(_) =>
-              Future.successful(BadRequest(JsError.toJson(e).toString()))
+              Future.successful(BadRequest(JsError.toJson(e)))
           }
         )
       }

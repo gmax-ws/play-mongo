@@ -10,6 +10,7 @@ lazy val root = (project in file("."))
       "org.mongodb.scala" %% "mongo-scala-driver" % "4.2.2",
       "io.minio" % "minio" % "8.2.1",
       "com.amazonaws" % "aws-java-sdk-s3" % "1.11.860",
+      "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.3",
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
     ),
     scalacOptions ++= Seq(

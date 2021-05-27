@@ -8,4 +8,5 @@ author: Marius Gligor
 contact: <marius.gligor@gmail.com>
 
 An example of *Play framework, MongoDB* microservice REST API.  
-Provide *Keycloak Identity and Access Management* integration for authorization using *JWT* access tokens.
+Provides *Keycloak Identity and Access Management* integration for authorization using *JWT* access tokens and
+integration with *Google* and *Facebook* *OAuth2*, *MinIO*, *AWS S3* and *Splunk* services.

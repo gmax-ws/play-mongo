@@ -37,7 +37,7 @@ object OAuth2Facebook {
       val json = valid.json
       val pict =
         if (picture.status == Status.OK)
-          Option(picture.underlying[Response].getUri.toString)
+          Option(picture.underlying[Response].getUri.toUrl)
         else None
       Right(
         Map(
