@@ -1,4 +1,4 @@
-[![GPL V2 License](https://img.shields.io/badge/license-GPL%20(%3E%3D%202)-blue)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 # Play, MongoDB microservice with Keycloak integration
 ## Copyright (C) 2021 Scalable Solutions, all rights reserved.
 
