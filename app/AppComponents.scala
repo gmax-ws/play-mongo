@@ -3,11 +3,12 @@ import controllers.{OAuthController, PersonController, SplunkController}
 import play.api.ApplicationLoader.Context
 import play.api.BuiltInComponentsFromContext
 import play.api.http.DefaultHttpErrorHandler
-import play.api.libs.ws.ahc.{AhcWSClient, AhcWSClientConfig, AhcWSClientConfigFactory}
-import play.api.mvc.{RequestHeader, Result, Results}
+import play.api.libs.ws.ahc.{AhcWSClient, AhcWSClientConfigFactory}
+import play.api.mvc.{EssentialFilter, RequestHeader, Result, Results}
 import play.api.routing.Router
 import play.api.routing.sird._
 import play.filters.HttpFiltersComponents
+import play.filters.cors.CORSComponents
 import repo.person.{PersonMongo, PersonRepo}
 import splunk.Splunk
 
@@ -16,10 +17,13 @@ import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 class AppComponents(context: Context)
     extends BuiltInComponentsFromContext(context)
+    with CORSComponents
     with HttpFiltersComponents
     with controllers.AssetsComponents {
   implicit lazy val requestTimeout: FiniteDuration = 10000.millis
-  implicit lazy val ws: AhcWSClient = AhcWSClient(AhcWSClientConfigFactory.forConfig())
+  implicit lazy val ws: AhcWSClient = AhcWSClient(
+    AhcWSClientConfigFactory.forConfig()
+  )
   lazy val config: Config = configuration.underlying
   lazy val personRepo: PersonRepo = PersonMongo.repo(config)
 
@@ -71,4 +75,15 @@ class AppComponents(context: Context)
       ): Future[Result] =
         Future.successful(Results.BadRequest("Bad request!"))
     }
+
+  override def httpFilters: Seq[EssentialFilter] = {
+    val defaultFilters = super.httpFilters
+
+    val disabledFilters: Set[EssentialFilter] = Set(csrfFilter)
+
+    // Do not enable Gzip, introduces a vulnerability to BREACH attacks (CVE-2013-3587)
+    val enabledFilters: Seq[EssentialFilter] = Seq(corsFilter)
+
+    enabledFilters ++ defaultFilters.filterNot(disabledFilters.contains)
+  }
 }
