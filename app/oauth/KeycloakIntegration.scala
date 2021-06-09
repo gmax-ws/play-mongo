@@ -4,6 +4,7 @@ import akka.http.scaladsl.model.StatusCode
 import akka.http.scaladsl.model.StatusCodes._
 import akka.util.ByteString
 import com.typesafe.config._
+import controllers.PersonJsonCodecs.rsp
 import play.api.http.{HeaderNames, HttpEntity, MimeTypes}
 import play.api.libs.json.JsValue
 import play.api.libs.ws.{WSClient, WSResponse}
@@ -55,6 +56,25 @@ object KeycloakIntegration {
           "grant_type" -> Seq("client_credentials"),
           "client_id" -> Seq(client),
           "client_secret" -> Seq(secret)
+        )
+      )
+
+  def authenticate(userName: String, password: String)(implicit
+      ws: WSClient,
+      requestTimeout: FiniteDuration
+  ): Future[WSResponse] =
+    ws.url(tokenUri)
+      .withRequestTimeout(requestTimeout)
+      .withHttpHeaders(
+        HeaderNames.CONTENT_TYPE -> MimeTypes.FORM
+      )
+      .post(
+        Map(
+          "grant_type" -> Seq("password"),
+          "client_id" -> Seq(client),
+          "client_secret" -> Seq(secret),
+          "username" -> Seq(userName),
+          "password" -> Seq(password)
         )
       )
 
@@ -131,7 +151,7 @@ object KeycloakIntegration {
       Future.successful(
         Result(
           ResponseHeader(code.intValue()),
-          HttpEntity.Strict(ByteString.fromString(body), None)
+          HttpEntity.Strict(ByteString.fromString(rsp(body).toString), None)
         )
       )
 
